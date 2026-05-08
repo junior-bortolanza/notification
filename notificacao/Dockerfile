@@ -1,18 +1,17 @@
-FROM gradle:8.14-jdk21 AS BUILD
+FROM gradle:8.14-jdk21 AS build
 
 WORKDIR /app
 
 COPY . .
 
-RUN gradle build --no-daemon
+RUN gradle build -x test --no-daemon
 
-FROM eclipse-temurin:21-jdk-alpine
+FROM eclipse-temurin:21-jre-alpine
 
 WORKDIR /app
 
-COPY --from=BUILD /app/build/libs/*.jar /app/notificacao.jar
+COPY --from=build /app/build/libs/*.jar /app/notificacao.jar
 
-EXPOSE 8083
+EXPOSE 8082
 
 CMD ["java", "-jar", "/app/notificacao.jar"]
-
